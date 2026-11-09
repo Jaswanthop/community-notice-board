@@ -9,39 +9,13 @@ class ProfileScreen extends StatelessWidget {
 
   Future<void> _editName(BuildContext context) async {
     final state = AppScope.of(context);
-    final controller = TextEditingController(text: state.userName);
 
     final name = await showDialog<String>(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Your name'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              hintText: 'e.g. Alex Morgan',
-              labelText: 'Display name',
-            ),
-            onSubmitted: (String value) =>
-                Navigator.of(dialogContext).pop(value),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(controller.text),
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
+      builder: (BuildContext dialogContext) =>
+          _NameDialog(initialName: state.userName),
     );
 
-    controller.dispose();
     if (name != null) {
       await state.setUserName(name);
     }
@@ -196,6 +170,56 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _NameDialog extends StatefulWidget {
+  const _NameDialog({required this.initialName});
+
+  final String initialName;
+
+  @override
+  State<_NameDialog> createState() => _NameDialogState();
+}
+
+class _NameDialogState extends State<_NameDialog> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialName,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() => Navigator.of(context).pop(_controller.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Your name'),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        textCapitalization: TextCapitalization.words,
+        decoration: const InputDecoration(
+          hintText: 'e.g. Alex Morgan',
+          labelText: 'Display name',
+        ),
+        onSubmitted: (_) => _submit(),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }

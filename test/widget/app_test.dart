@@ -97,6 +97,24 @@ void main() {
     );
   });
 
+  testWidgets('renames the profile from the edit dialog', (tester) async {
+    final state = await pumpApp(tester);
+
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Edit name'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'Pasala Jaswanth');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(state.userName, 'Pasala Jaswanth');
+    expect(find.text('Pasala Jaswanth'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('switches theme from the profile tab', (tester) async {
     final state = await pumpApp(tester);
 
