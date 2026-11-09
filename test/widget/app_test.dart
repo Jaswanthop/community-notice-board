@@ -55,13 +55,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Notice'), findsOneWidget);
+    expect(find.text('Community clean-up day this Saturday'), findsOneWidget);
+
+    await tester.drag(find.byType(ListView), const Offset(0, -600));
+    await tester.pumpAndSettle();
     expect(find.text('Comments'), findsOneWidget);
 
-    await tester.enterText(find.byType(TextField).last, 'See you there!');
+    await tester.enterText(find.byType(TextField), 'See you there!');
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Send comment'));
     await tester.pumpAndSettle();
 
+    await tester.drag(find.byType(ListView), const Offset(0, -400));
+    await tester.pumpAndSettle();
     expect(find.text('See you there!'), findsOneWidget);
   });
 
@@ -79,9 +85,7 @@ void main() {
       find.byKey(const Key('notice-body-field')),
       'Cookies and cakes at the community hall from 10 AM.',
     );
-    await tester.ensureVisible(
-      find.byKey(const Key('submit-notice-button')),
-    );
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('submit-notice-button')));
     await tester.pumpAndSettle();
